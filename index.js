@@ -1,4 +1,5 @@
 import { Bot } from "grammy";
+import http from "node:http";
 import { run, sequentialize } from "@grammyjs/runner";
 import { BOT_TOKEN, OWNER_ID } from "./setting/config.js";
 import { log } from "./path/logger.js";
@@ -16,6 +17,17 @@ function getSessionKey(ctx) {
     return ctx.chat?.id?.toString();
 }
 bot.use(sequentialize(getSessionKey));
+
+
+// ----------- ( health server: biar Komuta bisa akses URL / health probe di port 3000 ) ------------ //
+
+    const HEALTH_PORT = Number(process.env.PORT) || 3000;
+    http.createServer((req, res) => {
+        res.writeHead(200, { "Content-Type": "text/plain" });
+        res.end("ok");
+    }).listen(HEALTH_PORT, () => {
+        log.success(`health server siap di port ${HEALTH_PORT}`);
+    });
 
 
 // ----------- ( fungsi: notifyOwnerCrash, laporan darurat via Telegram ) ------------ //
