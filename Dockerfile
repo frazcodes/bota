@@ -7,6 +7,7 @@ RUN npm ci --omit=dev --no-audit --no-fund
 FROM node:22-slim AS runner
 ENV NODE_ENV=production
 WORKDIR /app
+RUN apt-get update && apt-get upgrade -y --no-install-recommends && rm -rf /var/lib/apt/lists/*
 COPY --from=deps /app/node_modules ./node_modules
 COPY --chown=node:node . .
 EXPOSE 3000
